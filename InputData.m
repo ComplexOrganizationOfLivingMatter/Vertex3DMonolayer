@@ -79,13 +79,13 @@ Set.PeakTimeEcBot=18;   % The time at which the contractility reaches the prescr
 Set.EndTimeEcBot=24;    % The time at whihc the contractility reduced to zero (hat  function
    
 Set.EcTypeTop=2;  
-Set.EpsCTWE=2.2;
+Set.EpsCTWE=2.2; % contractilty top wound edge
 Set.StartTimeEcTop=1;  
 Set.PeakTimeEcTop=16; % 6+6+Set.dt;   
 Set.EndTimeEcTop=800;    
     
 Set.EcTypeLat=1;  
-Set.EpsCLWE=0.01;    
+Set.EpsCLWE=0.01;    % contractility lateral wound edge
 Set.StartTimeEcLat=13;  
 Set.PeakTimeEcLat=13;   
 Set.EndTimeEcLat=0; 

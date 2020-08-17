@@ -1,4 +1,4 @@
-function [ C,Ener,X0,X,Y,Cell,Mat,Set,Stress,Ablated] = MainIncrements( Mat,Set )
+function [ nodalConnectivity,Ener,nodesCoords0,nodesCoords,verticesCoords,Cell,Mat,Set,Stress,Ablated] = MainIncrements( Mat,Set )
 %% Main Subroutine for model inisialisation and incremental loop
 % INPUT
 % Set = General settings. See SetDefaults.m for itsstructure
@@ -7,11 +7,13 @@ function [ C,Ener,X0,X,Y,Cell,Mat,Set,Stress,Ablated] = MainIncrements( Mat,Set 
 % C   = Model triangulasion
 % Ener(i,:) = Energy terms at time increment i
 % LOCALc
-% C(i,:) nodes in nodal bar element i
-% Cv(i,:) vertices in vertex bar element i
-% T(i,:) nodes forming triangle i
-% X(i,:) coordinates of node i
-% Y(i,:) coordinates of vertex i
+% nodalConnectivity(i,:) nodes in nodal bar element i % C before
+% verticesConnectivity(i,:) vertices in vertex bar element i % Cv before
+% trianglesConnectivity(i,:) nodes forming triangle i % T before renaming
+% nodesCoords(i,:) coordinates of node i %X before
+% verticesCoords(i,:) coordinates of vertex i %Y before
+% nodesCoords0 = Initial Nodal coordinates %X0 before
+% verticesCoords0 = Initial vertices coordinates %Y0 before
 
 if ~exist(strcat('.',Esc(),'Main.m'),'file')
     cd ..
@@ -48,23 +50,23 @@ if ~isfield(Set,'t')
     Set.t=0:Set.dt:Set.tend;
 end
 Set.Nincr=length(Set.t);
-[X,Xn,X0,C,Cv,T,Cell,Y,Yn,Y0,L,Ln,L0,N,Set,xExternal,Ablated,Ymid]= InitializeModel(Set);
-Stress.D.s=zeros(size(C,1),1);
-Stress.V.s=zeros(size(Cv,1),1);
-Ener.D.e=zeros(size(C,1),3); % energy due to [Elastic, tissue comtract, Wound contraactility]
-Ener.V.e=zeros(size(Cv,1),3); % energy due to [Elastic, tissue comtract, Wound contraactility]
+[nodesCoords,nodesCoordsN,nodesCoords0,nodalConnectivity,verticesConnectivity,trianglesConnectivity,Cell,verticesCoords,verticesCoordsN,verticesCoords0,L,Ln,L0,N,Set,xExternal,Ablated,Ymid]= InitializeModel(Set);
+Stress.D.s=zeros(size(nodalConnectivity,1),1);
+Stress.V.s=zeros(size(verticesConnectivity,1),1);
+Ener.D.e=zeros(size(nodalConnectivity,1),3); % energy due to [Elastic, tissue comtract, Wound contraactility]
+Ener.V.e=zeros(size(verticesConnectivity,1),3); % energy due to [Elastic, tissue comtract, Wound contraactility]
 % Initialise Mat.nDelay, Ld and ld. Ld{end}=rest length a t-Delay,Ld{1}=rest length at previous time
-[Ld,ld,Mat]=DelayInit(C,Cv,Ln,Mat,X,Y,Set);
+[Ld,ld,Mat]=DelayInit(nodalConnectivity,verticesConnectivity,Ln,Mat,nodesCoords,verticesCoords,Set);
 Set=ContractilityInit(Set);
-[Set]=MarkPropulsiveCells(X,Cell,Set);
+[Set]=MarkPropulsiveCells(nodesCoords,Cell,Set);
 Vol=zeros(length(Cell),Set.Nincr);
-CreateVTK(X,X0,C,Cv,Cell,Ablated,L,L0,Stress,Set,Y,Y0,'VTKResults')
+CreateVTK(nodesCoords,nodesCoords0,nodalConnectivity,verticesConnectivity,Cell,Ablated,L,L0,Stress,Set,verticesCoords,verticesCoords0,'VTKResults')
 %% Dofs and External force
 fprintf('Applying Boundary Conditions\n');
-[gext,dofP,U0]=BC(Set,X,xExternal);
+[gext,dofP,U0]=BC(Set,nodesCoords,xExternal);
 dof=GetDofs(Ablated,Set,dofP,Ymid);
 gext(dofP)=0;
-x=[reshape(X',Set.nodes*Set.dim,1);reshape(Y',Set.nvert*Set.dim,1)]; % row of displacements
+x=[reshape(nodesCoords',Set.nodes*Set.dim,1);reshape(verticesCoords',Set.nvert*Set.dim,1)]; % row of displacements
 %% Loop on Time increments
 fprintf('Starting Increments\n');
  dxr=0;
@@ -83,28 +85,28 @@ while i<=Set.Nincr
         x(dofP)=x(dofP)+U0(:,3)*i/Set.Nincr;
     end
     %---------------------  Update Configuration --------------------------
-    X=reshape(x(1:Set.dim*Set.nodes),Set.dim,Set.nodes)';
-    Y=reshape(x(Set.dim*Set.nodes+1:Set.dim*(Set.nodes+Set.nvert)),Set.dim,Set.nvert)';
-    Y=UpdateY(T,X,N,Y,Ablated.Yr,Ablated.YrZ,Ymid);% update vertices
+    nodesCoords=reshape(x(1:Set.dim*Set.nodes),Set.dim,Set.nodes)';
+    verticesCoords=reshape(x(Set.dim*Set.nodes+1:Set.dim*(Set.nodes+Set.nvert)),Set.dim,Set.nvert)';
+    verticesCoords=UpdateY(trianglesConnectivity,nodesCoords,N,verticesCoords,Ablated.Yr,Ablated.YrZ,Ymid);% update vertices
     %---------------------  Update Lengths --------------------------------
-    L=UpdateL(C,Cv,L,Ln,Ld{end},ld{end},Mat,X,Xn,Y,Yn,Set,Ablated);
+    L=UpdateL(nodalConnectivity,verticesConnectivity,L,Ln,Ld{end},ld{end},Mat,nodesCoords,nodesCoordsN,verticesCoords,verticesCoordsN,Set,Ablated);
     %---------------------- Ablate-----------------------------------------
     if Set.iIncr==Set.AblationTimeStep && Set.AblationN>0
-        [Ablated,Cell,X,T,C,Cv,Y,N,L,Ln,L0,Stress,X0,Y0,Xn,Yn,xExternal,Set,x,dof,Ymid]=BuildWound...
-            (Ablated,Cell,X,T,C,Cv,Y,N,L,Ln,L0,Stress,X0,Y0,Xn,Yn,xExternal,Set,Ymid);
+        [Ablated,Cell,nodesCoords,trianglesConnectivity,nodalConnectivity,verticesConnectivity,verticesCoords,N,L,Ln,L0,Stress,nodesCoords0,verticesCoords0,nodesCoordsN,verticesCoordsN,xExternal,Set,x,dof,Ymid]=BuildWound...
+            (Ablated,Cell,nodesCoords,trianglesConnectivity,nodalConnectivity,verticesConnectivity,verticesCoords,N,L,Ln,L0,Stress,nodesCoords0,verticesCoords0,nodesCoordsN,verticesCoordsN,xExternal,Set,Ymid);
     end 
     %---------------------- Remodel----------------------------------------
     if Set.StepHalving==0
-        [Ablated,Cell,X,T,C,Cv,Y,N,L,Ln,L0,Stress,X0,Y0,Xn,Yn,xExternal,Set,x,dof,Ymid]=Remodel...
-            (Ablated,Cell,X,T,C,Cv,Y,L,Ln,L0,Stress,X0,Y0,Xn,xExternal,Set,Ymid);
-        Xnn=X; % Store values after remodelling in case step halving is activated
-        Ynn=Y;
+        [Ablated,Cell,nodesCoords,trianglesConnectivity,nodalConnectivity,verticesConnectivity,verticesCoords,N,L,Ln,L0,Stress,nodesCoords0,verticesCoords0,nodesCoordsN,verticesCoordsN,xExternal,Set,x,dof,Ymid]=Remodel...
+            (Ablated,Cell,nodesCoords,trianglesConnectivity,nodalConnectivity,verticesConnectivity,verticesCoords,L,Ln,L0,Stress,nodesCoords0,verticesCoords0,nodesCoordsN,xExternal,Set,Ymid);
+        Xnn=nodesCoords; % Store values after remodelling in case step halving is activated
+        Ynn=verticesCoords;
         Lnn=L;
         dof0=dof;
     end
     %---------------------- Compute K,g------------------------------------
     % Solution X such that X+U gint(X)+gext=0
-    [Cell,Ener,g,K,Set,L,Stress]=gKGlob(Ablated,C,Cv,Cell,Mat,L,L0,N,Stress,Set,i,T,X,Y,Yn,Ymid);
+    [Cell,Ener,g,K,Set,L,Stress]=gKGlob(Ablated,nodalConnectivity,verticesConnectivity,Cell,Mat,L,L0,N,Stress,Set,i,trianglesConnectivity,nodesCoords,verticesCoords,verticesCoordsN,Ymid);
     %---------------------  Applied External force-------------------------
     gext=[gext(1:Set.nodes*Set.dim);zeros(length(x)-Set.nodes*Set.dim,1)];
     g=g-gext*i/Set.Nincr;   
@@ -117,15 +119,15 @@ while i<=Set.Nincr
         x=x+dx; % update nodes
         
         %---------------------  Update Configuration ----------------------
-        X=reshape(x(1:Set.dim*Set.nodes),Set.dim,Set.nodes)';
-        Y=reshape(x(Set.dim*Set.nodes+1:Set.dim*(Set.nodes+Set.nvert)),Set.dim,Set.nvert)';
-        Y=UpdateY(T,X,N,Y,Ablated.Yr,Ablated.YrZ,Ymid);% update vertices
+        nodesCoords=reshape(x(1:Set.dim*Set.nodes),Set.dim,Set.nodes)';
+        verticesCoords=reshape(x(Set.dim*Set.nodes+1:Set.dim*(Set.nodes+Set.nvert)),Set.dim,Set.nvert)';
+        verticesCoords=UpdateY(trianglesConnectivity,nodesCoords,N,verticesCoords,Ablated.Yr,Ablated.YrZ,Ymid);% update vertices
         
         %---------------------  Update Lengths ----------------------------
-        L=UpdateL(C,Cv,L,Ln,Ld{end},ld{end},Mat,X,Xn,Y,Yn,Set,Ablated);
+        L=UpdateL(nodalConnectivity,verticesConnectivity,L,Ln,Ld{end},ld{end},Mat,nodesCoords,nodesCoordsN,verticesCoords,verticesCoordsN,Set,Ablated);
         
         %---------------------- Recompute K,g------------------------------
-        [Cell,Ener,g,K,Set,L,Stress]=gKGlob(Ablated,C,Cv,Cell,Mat,L,L0,N,Stress,Set,i,T,X,Y,Yn,Ymid);
+        [Cell,Ener,g,K,Set,L,Stress]=gKGlob(Ablated,nodalConnectivity,verticesConnectivity,Cell,Mat,L,L0,N,Stress,Set,i,trianglesConnectivity,nodesCoords,verticesCoords,verticesCoordsN,Ymid);
         g=g-gext*i/Set.Nincr;
         
         dxr=norm(dx(dof)./x(dof));
@@ -155,12 +157,12 @@ while i<=Set.Nincr
                 Set=UpdateEpsCW(Set,i); % adds new interpolated value to Set.EpsCWX
                 Set.Nincr=Set.Nincr+1;
             end
-            X=Xnn; % Copy previous coordinates, with new remodelling
-            Y=Ynn;
+            nodesCoords=Xnn; % Copy previous coordinates, with new remodelling
+            verticesCoords=Ynn;
             L=Lnn;
-            x=[reshape(X',Set.dim*Set.nodes,1) ; reshape(Y',Set.dim*Set.nvert,1)];
+            x=[reshape(nodesCoords',Set.dim*Set.nodes,1) ; reshape(verticesCoords',Set.dim*Set.nvert,1)];
             if Set.StepHalving==Set.StepHalvingMax % Remove relaxed dof
-                dofYr=size(X,1)*size(X,2)+[Ablated.Yr(Ablated.Yr>0)*3-2 ; Ablated.Yr(Ablated.Yr>0)*3-1 ; Ablated.Yr(Ablated.Yr>0)*3];
+                dofYr=size(nodesCoords,1)*size(nodesCoords,2)+[Ablated.Yr(Ablated.Yr>0)*3-2 ; Ablated.Yr(Ablated.Yr>0)*3-1 ; Ablated.Yr(Ablated.Yr>0)*3];
                 dof(ismember(dof,dofYr))=[]; % In last attempt, fix vertex displacements
             end
         else
@@ -171,10 +173,10 @@ while i<=Set.Nincr
         if length(dof)~=length(dof0)
             warning('Increment converged with fixed relaxed vertex displacements.');
             % Apply same horizontal dissplacement of ring nodes to relaxed vertices
-            Y=ForceRadialYDisplacement(Ablated,X,Xn,Y);
+            verticesCoords=ForceRadialYDisplacement(Ablated,nodesCoords,nodesCoordsN,verticesCoords);
         end
-        Xn=X;
-        Yn=Y;
+        nodesCoordsN=nodesCoords;
+        verticesCoordsN=verticesCoords;
         Ln=L;
         if Mat.nDelay>0
             for t=size(Ld,1):-1:2
@@ -182,10 +184,10 @@ while i<=Set.Nincr
                 ld{t}=ld{t-1};
             end
             Ld{1}=Ln;
-            ld{1}=Lengths(C,Cv,X,Y);
+            ld{1}=Lengths(nodalConnectivity,verticesConnectivity,nodesCoords,verticesCoords);
         end
-        Ablated=WoundSize(Ablated,Cell,C,Cv,X0,Set,Y,X);
-        CreateVTK(X,X0,C,Cv,Cell,Ablated,L,L0,Stress,Set,Y,Y0,'VTKResults')
+        Ablated=WoundSize(Ablated,Cell,nodalConnectivity,verticesConnectivity,nodesCoords0,Set,verticesCoords,nodesCoords);
+        CreateVTK(nodesCoords,nodesCoords0,nodalConnectivity,verticesConnectivity,Cell,Ablated,L,L0,Stress,Set,verticesCoords,verticesCoords0,'VTKResults')
         for c=1:length(Cell)
             Vol(c,i)=Cell{c}.Vol;
         end
