@@ -2,5 +2,5 @@
 *.vtk
 *.mat
 *.asv
-
 docs/*
+*.pdf
