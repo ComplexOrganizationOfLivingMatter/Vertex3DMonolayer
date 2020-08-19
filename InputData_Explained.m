@@ -9,15 +9,16 @@
 % Frontiers in Bioengineering and Biotechnology, Vol. 8, pp. 1-11, 2020
 % 
 
+%% Time setup
 %Q: How can I couple simulations with natural procedures?
-Set.yRelaxation=true; % trueBottom verties no not follow 
+Set.yRelaxation=true; % trueBottom vertices no not follow %???
 Set.tend=15;          % Final time % tend = 150 (40 seconds)
 Set.dt=1;             % Time-step size (in wound healing applied during closure)
 % May be declared as a vector:
 % Set.t=[0:0.6:6 6+Set.dt:Set.dt:Set.tend]; % Time history. If not declared, Set.t=0:Set.dt:Set.tend
 % Set.t=[0:0.6:6 12:3:72]; % Filippos
 
-% GEOMETRY:
+%% GEOMETRY:
 % For experimental location of Cell Centres:
 % Set.CellCentres='CellCentres106.mat';%'Xtb.mat';% CellCentres.mat=62 cells. CellCentres1.mat=153 cells, CellCentres221.mat=221 cells, ...
 
@@ -28,7 +29,7 @@ Set.nz=1;
 Set.h=3; % Height in um
 Set.umPerPixel=0.0527; % Scaling of X coordinates. Units in *.mat files with cell centres are in pixel units.
 
-% BOUNDARY CONDITIONS:
+%% BOUNDARY CONDITIONS (BC):
 Set.BCcode=3; % =1: Incremental applied x-displacement at X=cont two boundaries. Stretching simulation.
               % =-1: Same as 1, but only applied on the first step.
               % =2: Applied force. Stretching simulation.
@@ -36,41 +37,52 @@ Set.BCcode=3; % =1: Incremental applied x-displacement at X=cont two boundaries.
               % =4: Fixed z for bottom, simulation of propulsion and friction (Extracellular Matrix) 
               % =5: Free Boundary 
               % =6: Fixed z for bottom with a region of free z bottom, 
-              %     The Region of wiht Free-Z defined by 
-              %     Set.ZFreeX=[X1 X2];    
-                Set.ZFreeX=[round(Set.nx/5) round(Set.nx/1.2500)];
-Set.ModelTop=1; 
-     % 1 = same top/bottom with no mid-plane vertices
-     % 2 = same top/bottom with mid-plane vertices
-     % 3 = different top/bottom with mid-plane vertices
 
-Set.RemodelDelta=.2;%0.05; % Tolerance for graded Delaunay when Set.Remodel>0 
-                      % RemodelDelta=0 standard Delaunay
-                      % RemodelDelta>0 allows elongated cells.
-                      % Recommended =0.2
+%Only if Set.BCcode == 6
+%The Region of wiht Free-Z defined by Set.ZFreeX=[X1 X2];    
+Set.ZFreeX=[round(Set.nx/5) round(Set.nx/1.2500)];
+
+%% Model type
+% 1 = same top/bottom with no mid-plane vertices %scutoids are not possible
+% 2 = same top/bottom with mid-plane vertices % scutoids are possible but unlikely
+% 3 = different top/bottom with mid-plane vertices % scutoids are possible
+Set.ModelTop=1;
 
 
-Set.RemodelTolF=50; % Tolerance for filtering boundary triangles in Delaunay Remodeling.
-                     % r/R>TolF are filtered, r=cricumradius, R=inradius.
+%% Remodelling rate: tissue fluidity and viscosity
+% Tolerance for graded Delaunay when Set.Remodel>0
+% RemodelDelta=0 standard Delaunay
+% RemodelDelta>0 allows elongated cells.
+% Recommended = 0.2
+Set.RemodelDelta = 0.2; 
 
-%% MATERIAL PROPERTIES 
+% Tolerance for filtering boundary triangles in Delaunay Remodeling.
+% r/R>TolF are filtered, r=cricumradius, R=inradius.
+Set.RemodelTolF=50; 
+
+%% --------- MATERIAL PROPERTIES --------- %%
 % Volume 
 Set.lambdaV=20; % Volume penalisation
 
-% Delaunay (D) = Nodal (N)
-Mat.D.k0=0.5; % Stiffness Delaunay Spring branch %K_d0: cytoplasm elasticity
-Mat.D.k=0.0; % Stiffness Delaunay Spring branch %K_d: cytoplasm stiffness
-Mat.D.EpsC=0.0; % contractility (no distinction top, bottom ,lateral on nodal)
+%% Delaunay (D) = Nodal (N)
+Mat.D.k0=0.5; %K_d0: cytoplasm elasticity
+Mat.D.k=0.0; %K_d: cytoplasm stiffness
+% Epsilon_c: Background cell's connectivity
+% Tension of each cell junction
+% Contractility 
+% No distinction top, bottom ,lateral on nodal
+Mat.D.EpsC=0.0; 
 
 % Vertex (V)
 Mat.V.k0=0.5; % Stiffness Vertices spring branch
 Mat.V.k=1.0; % 1; Stiffness Vertices spring branch
 Mat.V.gamma=0.2; % 0.8
+% Ep
 Mat.V.EpsCT=0.10; %0.2 contractility Top
 Mat.V.EpsCB=0.10; %0.2 contractility Bottom     
 Mat.V.EpsCL=0.40; % 0.05 contractility Laterals
 
-%% Ablation
+%% --------- Ablation --------- %%
 Set.AblationN=1;   % Number of ablated cells
 Set.EcTypeBot=2;       % Type of The contractility  profile. See 'help ContractilityInit'
                        % =1 Step function (needed parameter Set.StartTimeEcBot, Set.EpsCBWE)
@@ -102,7 +114,7 @@ Set.OutputVTK=true;
 Set.MaxIter=25;
 Set.StepHalvingMax=3;
 
-%% Substrate friction + Propulsion
+%% --------- Substrate friction + Propulsion --------- %%
 %%% while using these options, make sure that the botttom vertices are not fully fixed 
 
 Set.eta=.0;        % friction viscosity
