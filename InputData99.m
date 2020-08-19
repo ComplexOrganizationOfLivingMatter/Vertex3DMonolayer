@@ -30,12 +30,12 @@ Set.RemodelTolF=5; % Tolerance for filtering boundary triangles in Delaunay Remo
                      % r/R>TolF are filtered, r=cricumradius, R=inradius.
 
 %% Material 
-% volume 
+% Volume 
 Set.lambdaV=20; % Volume penalisation
 
-% Delaunay
-Mat.D.k0=0.3; % Stiffness Delaunay Spring branch
-Mat.D.k=0.0; % Stiffness Delaunay Spring branch
+% Delaunay (D) = Nodal (N)
+Mat.D.k0=0.3; % Stiffness Delaunay Spring branch %K_d0: cytoplasm elasticity
+Mat.D.k=0.0; % Stiffness Delaunay Spring branch %K_d: cytoplasm stiffness
 Mat.D.EpsC=0.3; % contractility (no distinction top, bottom ,lateral on nodal)
 % Vertex
 Mat.V.k0=0.05; % Stiffness Vertices spring branch

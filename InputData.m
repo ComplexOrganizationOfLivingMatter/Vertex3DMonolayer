@@ -9,8 +9,9 @@
 % Frontiers in Bioengineering and Biotechnology, Vol. 8, pp. 1-11, 2020
 % 
 
+%Q: How can I couple simulations with natural procedures?
 Set.yRelaxation=true; % trueBottom verties no not follow 
-Set.tend=15;          % Final time
+Set.tend=15;          % Final time % tend = 150 (40 seconds)
 Set.dt=1;             % Time-step size (in wound healing applied during closure)
 % May be declared as a vector:
 % Set.t=[0:0.6:6 6+Set.dt:Set.dt:Set.tend]; % Time history. If not declared, Set.t=0:Set.dt:Set.tend
@@ -20,12 +21,12 @@ Set.dt=1;             % Time-step size (in wound healing applied during closure)
 % For experimental location of Cell Centres:
 % Set.CellCentres='CellCentres106.mat';%'Xtb.mat';% CellCentres.mat=62 cells. CellCentres1.mat=153 cells, CellCentres221.mat=221 cells, ...
 
-% Geometrical propoerties if not experimental lovation
+% Geometrical properties if not experimental lovation
 Set.nx=8;
 Set.ny=8;
 Set.nz=1;
 Set.h=3; % Height in um
-Set.umPerPixel=0.0527; % Scaling of X coordinates. Units in *.mat files with cell centres ar in pixel units.
+Set.umPerPixel=0.0527; % Scaling of X coordinates. Units in *.mat files with cell centres are in pixel units.
 
 % BOUNDARY CONDITIONS:
 Set.BCcode=3; % =1: Incremental applied x-displacement at X=cont two boundaries. Stretching simulation.
@@ -53,14 +54,15 @@ Set.RemodelTolF=50; % Tolerance for filtering boundary triangles in Delaunay Rem
                      % r/R>TolF are filtered, r=cricumradius, R=inradius.
 
 %% MATERIAL PROPERTIES 
-% volume 
+% Volume 
 Set.lambdaV=20; % Volume penalisation
 
-% Delaunay
-Mat.D.k0=0.5; % Stiffness Delaunay Spring branch
-Mat.D.k=0.0; % Stiffness Delaunay Spring branch
+% Delaunay (D) = Nodal (N)
+Mat.D.k0=0.5; % Stiffness Delaunay Spring branch %K_d0: cytoplasm elasticity
+Mat.D.k=0.0; % Stiffness Delaunay Spring branch %K_d: cytoplasm stiffness
 Mat.D.EpsC=0.0; % contractility (no distinction top, bottom ,lateral on nodal)
-% Vertex
+
+% Vertex (V)
 Mat.V.k0=0.5; % Stiffness Vertices spring branch
 Mat.V.k=1.0; % 1; Stiffness Vertices spring branch
 Mat.V.gamma=0.2; % 0.8
