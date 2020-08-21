@@ -63,31 +63,41 @@ __TODO__
 Set.yRelaxation=true; % trueBottom vertices no not follow %???
 ```
 
-### Geometry:
+### Geometry
 
-In order to perfectly match your experimental results, you __need__ too add the cell centers of each cell. They should be in an array of 2xN called ```X```, being N the number of cells. The file should a Matlab file (.mat). Examples of this file are 'CellCentres.m' and 'CellCentres99.m'
+In order to perfectly match your experimental results, you __need__ too add the cell centers of each cell. They should be in an array of 2xN called ```X```, being N the number of cells within a Matlab file (.mat). Each cell centre are in pixel units. Examples of this file are 'CellCentres.m' and 'CellCentres99.m'
 
 __TO CHECK__ Could you create the cell centers randomly?
 
 ```Matlab
 Set.CellCentres='CellCentres.mat'
 ```
+(__IMPROVE__) Geometrical properties of the vertex model, if not experimental lovation
 
-% Geometrical properties if not experimental lovation
 Set.nx=8;
 Set.ny=8;
 Set.nz=1;
-Set.h=3; % Height in um
-Set.umPerPixel=0.0527; % Scaling of X coordinates. Units in \*.mat files with cell centres are in pixel units.
 
-%% BOUNDARY CONDITIONS (BC):
-% =1: Incremental applied x-displacement at X=cont two boundaries. Stretching simulation.
-% =-1: Same as 1, but only applied on the first step.
-% =2: Applied force. Stretching simulation.
-% =3: Fixed boundary. z for bottom, x and y for domain boundary. Wound healing simulation.
-% =4: Fixed z for bottom, simulation of propulsion and friction (Extracellular Matrix)
-% =5: Free Boundary
-% =6: Fixed z for bottom with a region of free z bottom
+Cells initial height are expressed in micrometers (µm):
+```Matlab
+Set.h=3;
+```
+
+Scaling of X coordinates. 
+```Matlab
+Set.umPerPixel=0.0527;
+```
+
+### BOUNDARY CONDITIONS (BC)
+
+
+1. Incremental applied x-displacement at X=cont two boundaries. Stretching simulation.
+-1. Same as 1, but only applied on the first step.
+2. Applied force. Stretching simulation.
+3. Fixed boundary. z for bottom, x and y for domain boundary. Wound healing simulation.
+4. Fixed z for bottom, simulation of propulsion and friction (Extracellular Matrix)
+5. Free Boundary
+6. Fixed z for bottom with a region of free z bottom
 Set.BCcode=3; 
 
 %Only if Set.BCcode == 6
