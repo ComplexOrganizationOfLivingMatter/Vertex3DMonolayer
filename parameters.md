@@ -71,6 +71,7 @@ __TO CHECK__ Could you create the cell centers randomly?
 
 ```Matlab
 Set.CellCentres='CellCentres.mat'
+```
 
 % Geometrical properties if not experimental lovation
 Set.nx=8;
