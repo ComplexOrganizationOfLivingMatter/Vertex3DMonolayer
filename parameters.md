@@ -2,19 +2,17 @@
 
 20/7/2020 - v4.9
 
-## Reference:
+__Reference:__
 Ioannou, F., Dawi, M.A., Tetley, R.J., Mao, Y., Munoz, J.J., 
 Development of a new 3D hybrid model for epithelia morphogenesis, 
 Frontiers in Bioengineering and Biotechnology, Vol. 8, pp. 1-11, 2020, 
 https://doi.org/10.3389/fbioe.2020.00405
 
-## Paramaters
-
 The inputs required for this vertex model can be seen at: 'SetDefaults.m'
 
 Here, we will explain the 'inputData\*.m' and the parameters used there.
 
-### Initial setup
+## Initial setup
 
 The program can output a VTK files of each time step to display the cells' shape.
 
@@ -63,7 +61,7 @@ __TODO__
 Set.yRelaxation=true; % trueBottom vertices no not follow %???
 ```
 
-#### Geometry:
+### Geometry:
 
 In order to perfectly match your experimental results, you __need__ too add the cell centers of each cell. They should be in an array of 2xN called ```X```, being N the number of cells. The file should a Matlab file (.mat). Examples of this file are 'CellCentres.m' and 'CellCentres99.m'
 
@@ -112,7 +110,7 @@ Set.RemodelDelta = 0.2;
 % r/R>TolF are filtered, r=cricumradius, R=inradius.
 Set.RemodelTolF=50;
 
-### Material properties
+## Material properties
 
 % Volume penalisation
 % When higher cells cannont change its volume
@@ -145,7 +143,7 @@ Mat.V.EpsCB=0.2; % Contractility Bottom
 Mat.V.EpsCL=0.40; % Contractility Laterals
 
 
-### Ablation
+## Ablation
 
 % Number of ablated cells
 Set.AblationN=1;
@@ -190,7 +188,7 @@ Set.StartTimeEcLat=13;
 Set.PeakTimeEcLat=13;
 Set.EndTimeEcLat=0;
 
-### Substrate friction + Propulsion
+## Substrate friction + Propulsion
  __IMPORTANT__: while using these options, make sure that the botttom vertices are not fully fixed
 
 Set.Propulsion=false;
