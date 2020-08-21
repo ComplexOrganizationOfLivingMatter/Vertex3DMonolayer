@@ -63,16 +63,21 @@ __TODO__
 Set.yRelaxation=true; % trueBottom vertices no not follow %???
 ```
 
-### Geometry:
-For experimental location of Cell Centres:
-% Set.CellCentres='CellCentres106.mat';%'Xtb.mat';% CellCentres.mat=62 cells. CellCentres1.mat=153 cells, CellCentres221.mat=221 cells, ...
+#### Geometry:
+
+In order to perfectly match your experimental results, you __need__ too add the cell centers of each cell. They should be in an array of 2xN called ```X```, being N the number of cells. The file should a Matlab file (.mat). Examples of this file are 'CellCentres.m' and 'CellCentres99.m'
+
+__TO CHECK__ Could you create the cell centers randomly?
+
+```Matlab
+Set.CellCentres='CellCentres.mat'
 
 % Geometrical properties if not experimental lovation
 Set.nx=8;
 Set.ny=8;
 Set.nz=1;
 Set.h=3; % Height in um
-Set.umPerPixel=0.0527; % Scaling of X coordinates. Units in *.mat files with cell centres are in pixel units.
+Set.umPerPixel=0.0527; % Scaling of X coordinates. Units in \*.mat files with cell centres are in pixel units.
 
 %% BOUNDARY CONDITIONS (BC):
 % =1: Incremental applied x-displacement at X=cont two boundaries. Stretching simulation.
@@ -106,7 +111,8 @@ Set.RemodelDelta = 0.2;
 % r/R>TolF are filtered, r=cricumradius, R=inradius.
 Set.RemodelTolF=50;
 
-%% --------- MATERIAL PROPERTIES --------- %%
+### Material properties
+
 % Volume penalisation
 % When higher cells cannont change its volume
 % if lambda_volume == 20, then effective volume change is 7% (approx)
@@ -137,7 +143,9 @@ Mat.V.EpsCT=0.2; % Contractility Top
 Mat.V.EpsCB=0.2; % Contractility Bottom
 Mat.V.EpsCL=0.40; % Contractility Laterals
 
-%% --------- Ablation --------- %%
+
+### Ablation
+
 % Number of ablated cells
 Set.AblationN=1;
 % ? Basal = bottom
@@ -168,7 +176,7 @@ Set.EndTimeEcBot=24;    % The time at whihc the contractility reduced to zero (h
 
 %% Top ablation info
 Set.EcTypeTop=2;
-% EpsCTWE ~= 2.2, contractility is insufficient to close the wound
+% EpsCTWE \~= 2.2, contractility is insufficient to close the wound
 Set.EpsCTWE=2.3; % contractilty top wound edge
 Set.StartTimeEcTop=1;
 Set.PeakTimeEcTop=16; % 6+6+Set.dt;
@@ -181,8 +189,8 @@ Set.StartTimeEcLat=13;
 Set.PeakTimeEcLat=13;
 Set.EndTimeEcLat=0;
 
-%% --------- Substrate friction + Propulsion --------- %%
-%% IMPORTANT: while using these options, make sure that the botttom vertices are not fully fixed
+### Substrate friction + Propulsion
+ __IMPORTANT__: while using these options, make sure that the botttom vertices are not fully fixed
 
 Set.Propulsion=false;
 
