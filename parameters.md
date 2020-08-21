@@ -22,9 +22,33 @@ The program can output a VTK files of each time step to display the cells' shape
 Set.OutputVTK=true;
 ```
 or
-```
+
+```Matlab
 Set.OutputVTK=false;
 ```
 
+One important parameter is the how much time will the model be evolving. For instance, if you want to set a final time of 40s, the T_end will be
+```Matlab
+Set.tend=15;
+```
+Also you can set the time-step size (in wound healing applied during closure).
+```Matlab
+Set.dt=1;
+```
+The time may also be declared as a vector. (__NEED TO BE CHECKED__)     
+```Matlab
+% Set.t=[0:0.6:6 6+Set.dt:Set.dt:Set.tend];
+```
 
+If not declared, would look like:
 
+```Matlab
+Set.t=0:Set.dt:Set.tend
+```
+
+Maximum number of iterations within a time step
+Set.MaxIter=25;
+
+Set.yRelaxation=true; % trueBottom vertices no not follow %???
+
+Set.StepHalvingMax=3;
