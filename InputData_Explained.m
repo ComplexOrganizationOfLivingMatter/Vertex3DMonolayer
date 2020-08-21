@@ -89,6 +89,7 @@ Mat.V.k0=0.05; % K_v0: cell junction elasticity
 Mat.V.k=1.0; % K_v: cell junction stiffness
 % Gamma of the Rheological model
 % Remodelling rate: tissue fluidity and viscosity
+% Rest length changes (gamma)
 Mat.V.gamma=0.2;
 
 % Epsilon_top, Epsilon_bottom and Epsilon_lateral
@@ -118,7 +119,9 @@ Set.WRemodelThreshold=0.1;
 % =1 Step function (needed parameter Set.StartTimeEcBot, Set.EpsCBWE)
 % =2 Hat  function  (needed parameter Set.StartTimeEcBot, Set.PeakTimeEcBot, Set.EndTimeEcBot, Set.EpsCBWE)
 Set.EcTypeBot=2;
-Set.EpsCBWE=1.3;    % value of applied contracitlity at vertices on bottom of wound edge;
+
+% value of applied contracitlity at vertices on bottom of wound edge;
+Set.EpsCBWE=1.3;    
 
 % Contractility timing
 Set.StartTimeEcBot=6;  % The time at which the contractility start to be applied
