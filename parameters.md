@@ -1,6 +1,8 @@
 # Input Data for 3D analysis of  wound healing on monolayers
 
-20/7/2020 - v4.9
+This is a Matlab project and it was tested for Matlab R2018a
+
+v4.9 - 20/7/2020
 
 ## Citation
 
@@ -12,9 +14,7 @@ https://doi.org/10.3389/fbioe.2020.00405
 
 ## Initial setup
 
-The inputs required for this vertex model can be seen at: 'SetDefaults.m'
-
-Here, we will explain the 'inputData\*.m' and the parameters used there.
+The inputs required for this vertex model can be seen at 'SetDefaults.m'. Here, we will explain the 'inputData\*.m' and the parameters used there.
 
 The program can output a VTK files of each time step to display the cells' shape.
 
@@ -88,35 +88,51 @@ Scaling of X coordinates.
 Set.umPerPixel=0.0527;
 ```
 
-### BOUNDARY CONDITIONS (BC)
+### Boundary Conditions (BC)
 
+In this vertex model exits several ways of defining the boundary conditions:
 
-1. Incremental applied x-displacement at X=cont two boundaries. Stretching simulation.
--1. Same as 1, but only applied on the first step.
-2. Applied force. Stretching simulation.
-3. Fixed boundary. z for bottom, x and y for domain boundary. Wound healing simulation.
-4. Fixed z for bottom, simulation of propulsion and friction (Extracellular Matrix)
-5. Free Boundary
-6. Fixed z for bottom with a region of free z bottom
-Set.BCcode=3; 
+* 1: Incremental applied x-displacement at X=cont two boundaries. Stretching simulation.
+* -1: Same as 1, but only applied on the first step.
+* 2: Applied force. Stretching simulation.
+* 3: Fixed boundary. z for bottom, x and y for domain boundary. Wound healing simulation.
+* 4: Fixed z for bottom, simulation of propulsion and friction (Extracellular Matrix)
+* 5: Free Boundary
+* 6: Fixed z for bottom with a region of free z bottom
 
-%Only if Set.BCcode == 6
-%The Region of wiht Free-Z defined by Set.ZFreeX=[X1 X2];
-Set.ZFreeX=[round(Set.nx/5) round(Set.nx/1.2500)];
+You can properly set this parameter by entering
+```Matlab
+Set.BCcode=3;
+``` 
+If option 6 is selected, ```Set.ZFreeX``` should be define as follows:
+```Matlab
+Set.ZFreeX=[X1 X2];
+```
+where X1 is __XXXXX__ and X2 __XXXXX__
 
-%% Model type
-% 1 = same top/bottom with no mid-plane vertices % scutoids are not possible
-% 2 = same top/bottom with mid-plane vertices % scutoids are possible but unlikely
-% 3 = different top/bottom with mid-plane vertices % scutoids are possible
+### Model type
+The model type referes to , in which we have 3 options:
+
+1. Same top/bottom with no mid-plane vertices.
+2. same top/bottom with mid-plane vertices.
+3. different top/bottom with mid-plane vertices.
+
+This features is defined as:
+```Matlab
 Set.ModelTop=1;
+```
 
+Note that in option 1, apico-basal intercalations ('scutoids') are not possible, whilst in option '2' are possible but unlikely. Option 3 allow scutoids and different apico-basal organization.
 
-%% Q: Don't know the difference between gamma and Remodelling delta 
+(__CHECK__) Q: Don't know the difference between gamma and Remodelling delta 
 % Tolerance for graded Delaunay when Set.Remodel>0
 % RemodelDelta=0 standard Delaunay
 % RemodelDelta>0 allows elongated cells.
 % Recommended = 0.2
+
+```Matlab
 Set.RemodelDelta = 0.2;
+```
 
 % Tolerance for filtering boundary triangles in Delaunay Remodeling.
 % r/R>TolF are filtered, r=cricumradius, R=inradius.
