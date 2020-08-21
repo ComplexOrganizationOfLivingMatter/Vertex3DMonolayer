@@ -10,8 +10,11 @@
 %
 
 %% Initial setup
+% Does the program outputs the VTK files
 Set.OutputVTK=true;
+% Maximum number of iterations within a time step
 Set.MaxIter=25;
+% ??
 Set.StepHalvingMax=3;
 
 %Q: How can I couple simulations with natural procedures?
@@ -34,26 +37,27 @@ Set.h=3; % Height in um
 Set.umPerPixel=0.0527; % Scaling of X coordinates. Units in *.mat files with cell centres are in pixel units.
 
 %% BOUNDARY CONDITIONS (BC):
-Set.BCcode=3; % =1: Incremental applied x-displacement at X=cont two boundaries. Stretching simulation.
+% =1: Incremental applied x-displacement at X=cont two boundaries. Stretching simulation.
 % =-1: Same as 1, but only applied on the first step.
 % =2: Applied force. Stretching simulation.
 % =3: Fixed boundary. z for bottom, x and y for domain boundary. Wound healing simulation.
 % =4: Fixed z for bottom, simulation of propulsion and friction (Extracellular Matrix)
 % =5: Free Boundary
-% =6: Fixed z for bottom with a region of free z bottom,
+% =6: Fixed z for bottom with a region of free z bottom
+Set.BCcode=3; 
 
 %Only if Set.BCcode == 6
 %The Region of wiht Free-Z defined by Set.ZFreeX=[X1 X2];
 Set.ZFreeX=[round(Set.nx/5) round(Set.nx/1.2500)];
 
 %% Model type
-% 1 = same top/bottom with no mid-plane vertices %scutoids are not possible
+% 1 = same top/bottom with no mid-plane vertices % scutoids are not possible
 % 2 = same top/bottom with mid-plane vertices % scutoids are possible but unlikely
 % 3 = different top/bottom with mid-plane vertices % scutoids are possible
 Set.ModelTop=1;
 
 
-%% Remodelling rate: tissue fluidity and viscosity
+%% Q: Don't know the difference between gamma and Remodelling delta 
 % Tolerance for graded Delaunay when Set.Remodel>0
 % RemodelDelta=0 standard Delaunay
 % RemodelDelta>0 allows elongated cells.
@@ -73,6 +77,7 @@ Set.lambdaV=20;
 %% Delaunay (D) = Nodal (N)
 Mat.D.k0=0.5; %K_d0: cytoplasm elasticity
 Mat.D.k=0.3; %K_d: cytoplasm stiffness
+
 % Epsilon_c: Background cell's connectivity
 % Tension of each cell junction
 % Contractility
@@ -82,8 +87,10 @@ Mat.D.EpsC=0.2;
 % Vertex (V)
 Mat.V.k0=0.05; % K_v0: cell junction elasticity
 Mat.V.k=1.0; % K_v: cell junction stiffness
-% Gamma???
-Mat.V.gamma=0.2; % 0.8
+% Gamma of the Rheological model
+% Remodelling rate: tissue fluidity and viscosity
+Mat.V.gamma=0.2;
+
 % Epsilon_top, Epsilon_bottom and Epsilon_lateral
 % Contraction of the wound edge cell contractility
 % Wound edge cell cortex or junction
@@ -94,7 +101,7 @@ Mat.V.EpsCL=0.40; % Contractility Laterals
 %% --------- Ablation --------- %%
 % Number of ablated cells
 Set.AblationN=1;
-% ?
+% ? Basal = bottom
 Set.FixedBasal=1;
 % The time step at which ablation will take place.
 Set.AblationTimeStep=1;
@@ -120,7 +127,8 @@ Set.EndTimeEcBot=24;    % The time at whihc the contractility reduced to zero (h
 
 %% Top ablation info
 Set.EcTypeTop=2;
-Set.EpsCTWE=2.2; % contractilty top wound edge
+% EpsCTWE ~= 2.2, contractility is insufficient to close the wound
+Set.EpsCTWE=2.3; % contractilty top wound edge
 Set.StartTimeEcTop=1;
 Set.PeakTimeEcTop=16; % 6+6+Set.dt;
 Set.EndTimeEcTop=800;
