@@ -125,7 +125,7 @@ Set.ModelTop=1;
 Note that in option 1, apico-basal intercalations ('scutoids') are not possible, whilst in option '2' are possible but unlikely. Option 3 allow scutoids and different apico-basal organization.
 
 (__CHECK__)
-The parameter ```RemodelDelta``` refers to tol_R. When ```Set.RemodelDelta=0``` the standard Delaunay is recovered; while for ```RemodelDelta>0``` suboptimal stretched triangles and cells are permitted (elongated cells will appear). 
+The parameter ```RemodelDelta``` refers to tol<sub>R</sub>. When ```Set.RemodelDelta=0``` the standard Delaunay is recovered; while for ```RemodelDelta>0``` suboptimal stretched triangles and cells are permitted (elongated cells will appear). 
 
 Recommended:
 
@@ -146,17 +146,20 @@ Set.RemodelTolF=50;
 ```
 
 ## Material properties
-
+λ<sub>V</sub>
 % Volume penalisation
 % When higher cells cannont change its volume
 % if lambda_volume == 20, then effective volume change is 7% (approx)
 Set.lambdaV=20;
 
 %% Delaunay (D) = Nodal (N)
+
+K<sub>d0</sub>
 Mat.D.k0=0.5; %K_d0: cytoplasm elasticity
+K<sub>d</sub>
 Mat.D.k=0.3; %K_d: cytoplasm stiffness
 
-% Epsilon_c: Background cell's connectivity
+Epsilon<sup>c</sup>: Background cell's connectivity
 % Tension of each cell junction
 % Contractility
 % No distinction top, bottom ,lateral on nodal
