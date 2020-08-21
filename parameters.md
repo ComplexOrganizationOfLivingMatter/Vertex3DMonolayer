@@ -18,5 +18,13 @@ Here, we will explain the 'inputData\*.m' and the parameters used there.
 
 The program can output a VTK files of each time step to display the cells' shape.
 
-Set.OutputVTK=true; or Set.OutputVTK=false;
+```Matlab 
+Set.OutputVTK=true;
+```
+or
+```
+Set.OutputVTK=false;
+```
+
+
 
