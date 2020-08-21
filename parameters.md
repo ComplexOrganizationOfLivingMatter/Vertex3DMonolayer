@@ -124,19 +124,26 @@ Set.ModelTop=1;
 
 Note that in option 1, apico-basal intercalations ('scutoids') are not possible, whilst in option '2' are possible but unlikely. Option 3 allow scutoids and different apico-basal organization.
 
-(__CHECK__) Q: Don't know the difference between gamma and Remodelling delta 
-% Tolerance for graded Delaunay when Set.Remodel>0
-% RemodelDelta=0 standard Delaunay
-% RemodelDelta>0 allows elongated cells.
-% Recommended = 0.2
+(__CHECK__)
+The parameter ```RemodelDelta``` refers to tol_R. When ```Set.RemodelDelta=0``` the standard Delaunay is recovered; while for ```RemodelDelta>0``` suboptimal stretched triangles and cells are permitted (elongated cells will appear). 
+
+Recommended:
 
 ```Matlab
 Set.RemodelDelta = 0.2;
 ```
 
-% Tolerance for filtering boundary triangles in Delaunay Remodeling.
-% r/R>TolF are filtered, r=cricumradius, R=inradius.
+Similarly, we can set the tolerance for filtering boundary triangles in Delaunay remodeling. Using the formula:
+
+```
+r/R > RemodelTolF
+``` 
+
+Triangles with r=cricumradius and R=inradius satisfying the above formula will be filtered.
+
+```Matlab
 Set.RemodelTolF=50;
+```
 
 ## Material properties
 
