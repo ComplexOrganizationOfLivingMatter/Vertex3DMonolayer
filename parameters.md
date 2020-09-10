@@ -233,7 +233,7 @@ You may also set a thrhold for intercalations on wound edge. It reflects the max
 Set.WRemodelThreshold=0.1;
 ```
 ### Contractility
-Different options for the contractility have been added. The following could be associated to bottom (suffix 'Bot'), top ('Top') or lateral ('Lat') contractility.
+Different options for the contractility have been added. The following could be associated to bottom (suffix 'Bot'), top ('Top') or lateral ('Lat') contractility. Also, the variable refering to the actual value of the contractility changes: EpsCTWE (the 'T' means top), EpsCBWE ('B' from bottom) and EpsCLWE ('L' of lateral).
 
 Step function (Option 1): given a starting time and a value, the contractility will reach that value at that time point. Thus, Set.StartTimeEcBot and Set.EpsCBWE are required to be set.
 
@@ -260,7 +260,7 @@ And the time at which the contractlity is reduced to zero.
 Set.EndTimeEcBot=24;
 ```
 
-The same type can be applied to the 'top' layer:
+The same type can be applied to the 'top' layer. Note that variables difer:
 ```Matlab
 Set.EcTypeTop=2;
 Set.EpsCTWE=2.3;
@@ -273,7 +273,7 @@ Note that values contractility values of EpsCTWE <= 2.2, were found not to be su
 And another example of lateratl ablation information:
 ```Matlab
 Set.EcTypeLat=1;
-Set.EpsCLWE=0.01;    % contractility lateral wound edge
+Set.EpsCLWE=0.01;
 Set.StartTimeEcLat=13;
 Set.PeakTimeEcLat=13;
 Set.EndTimeEcLat=0;
@@ -282,16 +282,29 @@ Set.EndTimeEcLat=0;
 ## Substrate friction + Propulsion
  __IMPORTANT__: while using these options, make sure that the botttom vertices are not fully fixed
 
+Need to understand better this section.
+
+```Matlab
 Set.Propulsion=false;
+```
+Friction viscosity:
+```Matlab
+Set.eta=.0;
+```
 
-Set.eta=.0;        % friction viscosity
-
-% Region 1 with Propulsion forces Set.mu1
+Region 1 with Propulsion forces Set.mu1
+```Matlab
 Set.PropulsiveRegionX1=[0 round(Set.nx/5)];
 Set.PropulsiveRegionY1=[0  Set.ny];
-Set.mu1=[.2 0 0];       % velocity
+```
+Velocity
+```Matlab
+Set.mu1=[.2 0 0]; 
+```
 
-% Region 2 with Propulsion forces Set.mu2
+Region 2 with Propulsion forces Set.mu2
+```Matlab
 Set.PropulsiveRegionX2=[round(Set.nx/1.33) Set.nx];
 Set.PropulsiveRegionY2=[0  Set.ny];
-Set.mu2=[-.2 0 0];       % velocity
+Set.mu2=[-.2 0 0];
+```
