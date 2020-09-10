@@ -147,38 +147,58 @@ Set.RemodelTolF=50;
 
 ## Material properties
 λ<sub>V</sub>
-% Volume penalisation
-% When higher cells cannont change its volume
-% if lambda_volume == 20, then effective volume change is 7% (approx)
+
+Volume penalisation. When higher cells cannont change its volume.
+For instance, if lambda_volume == 20, then effective volume change is 7% (approx)
+
+```Matlab
 Set.lambdaV=20;
+```
 
-%% Delaunay (D) = Nodal (N)
+The Nodal network (N), here is represented as a Delaunay (D) network, connecting each cell centre.
 
-K<sub>d0</sub>
-Mat.D.k0=0.5; %K_d0: cytoplasm elasticity
-K<sub>d</sub>
-Mat.D.k=0.3; %K_d: cytoplasm stiffness
+K<sub>d0</sub> which represents cytoplasm elasticity.
+```Matlab
+Mat.D.k0=0.5;
+```
+
+K<sub>d</sub> is related to citoplasm stiffness
+```Matlab
+Mat.D.k=0.3;
+```
 
 Epsilon<sup>c</sup>: Background cell's connectivity
-% Tension of each cell junction
-% Contractility
-% No distinction top, bottom ,lateral on nodal
+Tension of each cell junction
+Contractility
+No distinction top, bottom ,lateral on nodal
+```Matlab
 Mat.D.EpsC=0.2;
+```
 
 % Vertex (V)
+```Matlab
 Mat.V.k0=0.05; % K_v0: cell junction elasticity
-Mat.V.k=1.0; % K_v: cell junction stiffness
-% Gamma of the Rheological model
-% Remodelling rate: tissue fluidity and viscosity
-% Rest length changes (gamma)
-Mat.V.gamma=0.2;
+```
 
-% Epsilon_top, Epsilon_bottom and Epsilon_lateral
-% Contraction of the wound edge cell contractility
-% Wound edge cell cortex or junction
+```Matlab
+Mat.V.k=1.0; % K_v: cell junction stiffness
+```
+
+Gamma of the Rheological model
+Remodelling rate: tissue fluidity and viscosity
+Rest length changes (gamma)
+```Matlab
+Mat.V.gamma=0.2;
+```
+
+Epsilon_top, Epsilon_bottom and Epsilon_lateral
+Contraction of the wound edge cell contractility
+Wound edge cell cortex or junction
+```Matlab
 Mat.V.EpsCT=0.2; % Contractility Top
 Mat.V.EpsCB=0.2; % Contractility Bottom
 Mat.V.EpsCL=0.40; % Contractility Laterals
+```
 
 
 ## Ablation
