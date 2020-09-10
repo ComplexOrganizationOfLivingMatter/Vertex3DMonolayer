@@ -178,12 +178,14 @@ Mat.D.EpsC=0.2;
 
 ### Vertices network (V)
 
+K<sub>v0</sub> is cell junction elasticity
 ```Matlab
-Mat.V.k0=0.05; % K_v0: cell junction elasticity
+Mat.V.k0=0.05;  
 ```
 
+K<sub>v</sub> is cell junction stiffness.
 ```Matlab
-Mat.V.k=1.0; % K_v: cell junction stiffness
+Mat.V.k=1.0;
 ```
 
 Gamma of the Rheological model
