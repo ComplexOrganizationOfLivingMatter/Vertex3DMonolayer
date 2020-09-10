@@ -155,6 +155,7 @@ For instance, if lambda_volume == 20, then effective volume change is 7% (approx
 Set.lambdaV=20;
 ```
 
+### Nodal Network (N or D)
 The Nodal network (N), here is represented as a Delaunay (D) network, connecting each cell centre.
 
 K<sub>d0</sub> which represents cytoplasm elasticity.
@@ -175,7 +176,8 @@ No distinction top, bottom ,lateral on nodal
 Mat.D.EpsC=0.2;
 ```
 
-% Vertex (V)
+### Vertices network (V)
+
 ```Matlab
 Mat.V.k0=0.05; % K_v0: cell junction elasticity
 ```
@@ -203,48 +205,79 @@ Mat.V.EpsCL=0.40; % Contractility Laterals
 
 ## Ablation
 
-% Number of ablated cells
+You can change the number of ablated cells by setting 'AblationN':
+```Matlab
 Set.AblationN=1;
-% ? Basal = bottom
+```
+
+(QUESTION) Basal == bottom?
+```Matlab
 Set.FixedBasal=1;
-% The time step at which ablation will take place.
+```
+
+Set the time step at which ablation will take place:
+```Matlab
 Set.AblationTimeStep=1;
-% YmidWound:
-% =1 mid-plane vertices on the wound edge
-% =0 without mid-plane vertices on the wound edge
+```
+
+Regarding the mid-plane (or the possibility of apico-basal intercalations), you can set if the cells at the wound edge may undergo apico-basal intercaltions:
+Option 1: mid-plane vertices allowed
+Option 0: no mid-plane vertices allowed
+
+```Matlab
 Set.YmidWound=1;
-% Threshold for intercalation on the wound edge: it is the maximum allowed
-% aspect ratio
+```
+
+You may also set a thrhold for intercalations on wound edge. It reflects the maximum aspect ratio allowed.
+```Matlab
 Set.WRemodelThreshold=0.1;
+```
+### Contractility
+Different options for the contractility have been added. The following could be associated to bottom (suffix 'Bot'), top ('Top') or lateral ('Lat') contractility.
 
-%% Bottom ablation info
-% Type of The contractility  profile. See 'help ContractilityInit'
-% =1 Step function (needed parameter Set.StartTimeEcBot, Set.EpsCBWE)
-% =2 Hat  function  (needed parameter Set.StartTimeEcBot, Set.PeakTimeEcBot, Set.EndTimeEcBot, Set.EpsCBWE)
+Step function (Option 1): given a starting time and a value, the contractility will reach that value at that time point. Thus, Set.StartTimeEcBot and Set.EpsCBWE are required to be set.
+
+Hat function (Option 2): At a starting point (StartTimeEcBot), contractility starts to rise until it reaches a peak value (EpsCBWE) at some point (PeakTimeEcBot). Then, it starts to decrease reaching contracility equals to 0 at "EndTimeEcBot".
+
+An example of the hat function for bottom contractility would be:
+
+```Matlab
 Set.EcTypeBot=2;
+```
 
-% value of applied contracitlity at vertices on bottom of wound edge;
-Set.EpsCBWE=1.3;    
+The time at which the contractility starts to be applied:
 
-% Contractility timing
-Set.StartTimeEcBot=6;  % The time at which the contractility start to be applied
-Set.PeakTimeEcBot=18;   % The time at which the contractility reaches the prescribed value (hat function)
-Set.EndTimeEcBot=24;    % The time at whihc the contractility reduced to zero (hat  function
+```Matlab
+Set.StartTimeEcBot=6;
+```
+The time at which the contractility reaches the prescribed value (EpsCBWE):
+```Matlab
+Set.PeakTimeEcBot=18;
+Set.EpsCBWE=1.3;
+```
+And the time at which the contractlity is reduced to zero.
+```Matlab
+Set.EndTimeEcBot=24;
+```
 
-%% Top ablation info
+The same type can be applied to the 'top' layer:
+```Matlab
 Set.EcTypeTop=2;
-% EpsCTWE \~= 2.2, contractility is insufficient to close the wound
-Set.EpsCTWE=2.3; % contractilty top wound edge
+Set.EpsCTWE=2.3;
 Set.StartTimeEcTop=1;
-Set.PeakTimeEcTop=16; % 6+6+Set.dt;
+Set.PeakTimeEcTop=16;
 Set.EndTimeEcTop=800;
+```
+Note that values contractility values of EpsCTWE <= 2.2, were found not to be sufficient to close the wound. See [article]( #Citation) for more information.
 
-%% Lateral ablation info
+And another example of lateratl ablation information:
+```Matlab
 Set.EcTypeLat=1;
 Set.EpsCLWE=0.01;    % contractility lateral wound edge
 Set.StartTimeEcLat=13;
 Set.PeakTimeEcLat=13;
 Set.EndTimeEcLat=0;
+```
 
 ## Substrate friction + Propulsion
  __IMPORTANT__: while using these options, make sure that the botttom vertices are not fully fixed
