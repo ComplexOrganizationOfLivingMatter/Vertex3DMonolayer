@@ -155,15 +155,15 @@ For instance, if lambda_volume == 20, then effective volume change is 7% (approx
 Set.lambdaV=20;
 ```
 
-### Nodal Network (N or D)
+### Nodal Network (D)
 The Nodal network (N), here is represented as a Delaunay (D) network, connecting each cell centre.
 
-K<sub>d0</sub> which represents cytoplasm elasticity.
+K<sub>D0</sub> which represents cytoplasm elasticity.
 ```Matlab
 Mat.D.k0=0.5;
 ```
 
-K<sub>d</sub> is related to citoplasm stiffness
+K<sub>D</sub> is related to citoplasm stiffness
 ```Matlab
 Mat.D.k=0.3;
 ```
@@ -178,12 +178,12 @@ Mat.D.EpsC=0.2;
 
 ### Vertices network (V)
 
-K<sub>v0</sub> is cell junction elasticity
+K<sub>V0</sub> is cell junction elasticity
 ```Matlab
 Mat.V.k0=0.05;  
 ```
 
-K<sub>v</sub> is cell junction stiffness.
+K<sub>V</sub> is cell junction stiffness.
 ```Matlab
 Mat.V.k=1.0;
 ```
@@ -195,7 +195,7 @@ Rest length changes (gamma)
 Mat.V.gamma=0.2;
 ```
 
-Epsilon_top, Epsilon_bottom and Epsilon_lateral
+Υ<sup>c</sup><sub>top</sub>, Epsilon_bottom and Epsilon_lateral
 Contraction of the wound edge cell contractility
 Wound edge cell cortex or junction
 ```Matlab
